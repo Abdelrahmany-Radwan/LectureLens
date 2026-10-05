@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="LectureLens is a local-first lecture companion that records, transcribes, searches, and links study notes back to exact source timestamps." />
+  <meta name="theme-color" content="#16233f" />
+  <title>LectureLens — Hear it. Find it. Study it.</title>
+  <link rel="icon" href="./assets/lecturelens-mark.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <div class="progress" id="progress"></div>
+
+  <header class="site-header">
+    <a class="brand" href="#top" aria-label="LectureLens home">
+      <img src="./assets/lecturelens-mark.svg" alt="" width="34" height="34" />
+      <span>LectureLens</span>
+    </a>
+    <nav>
+      <a href="#product">Product</a>
+      <a href="#how">How it works</a>
+      <a href="#privacy">Privacy</a>
+      <a class="github-link" href="https://github.com/Abdelrahmany-Radwan/LectureLens" target="_blank" rel="noreferrer">GitHub ↗</a>
+    </nav>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <div class="hero-copy">
+        <p class="eyebrow">Local-first lecture intelligence</p>
+        <h1>Hear it.<br><em>Find it.</em><br>Study it.</h1>
+        <p class="lede">Record a lecture, turn it into searchable notes, and jump back to the exact moment your professor said it — without putting your class behind another subscription.</p>
+        <div class="hero-actions">
+          <a class="button primary" href="#product">Open the workspace</a>
+          <button class="button ghost" id="loadDemoTop" type="button">Show me a sample</button>
+        </div>
+        <div class="trust-row">
+          <span>Local-first</span>
+          <span>Timestamped evidence</span>
+          <span>Semantic search</span>
+          <span>No black-box notes</span>
+        </div>
+      </div>
+
+      <div class="hero-workspace" aria-label="LectureLens concept preview">
+        <div class="paper transcript-paper">
+          <div class="paper-top">
+            <span class="paper-dot"></span>
+            <small>CS 101 · Lecture 08</small>
+            <small>46:12</small>
+          </div>
+          <h3>Recursion & the call stack</h3>
+          <div class="transcript-line active">
+            <time>24:18</time>
+            <p>“A recursive function calls itself until a base condition tells it when to stop.”</p>
+          </div>
+          <div class="transcript-line">
+            <time>25:04</time>
+            <p>The call stack keeps track of each unfinished function call.</p>
+          </div>
+          <div class="transcript-line">
+            <time>27:31</time>
+            <p>Without a valid base case, recursion can continue until the stack is exhausted.</p>
+          </div>
+        </div>
+
+        <div class="question-card">
+          <small>ASK THE LECTURE</small>
+          <p>What is a base case?</p>
+          <div class="answer-box">
+            <strong>A stopping condition for recursion.</strong>
+            <span>Source · 24:18</span>
+          </div>
+        </div>
+
+        <svg class="hero-path" viewBox="0 0 500 220" aria-hidden="true">
+          <path d="M80 150 C190 70, 310 70, 420 120" />
+        </svg>
+
+        <div class="sticky">show me where<br>they said that ↗</div>
+      </div>
+    </section>
+
+    <section class="manifesto reveal">
+      <div>
+        <p class="eyebrow">Why this exists</p>
+        <h2>I wanted the study tool.<br>I didn’t want the subscription.</h2>
+      </div>
+      <p>LectureLens started from a simple student problem: lecture transcription, summaries, and searchable notes are useful — but the best versions are often locked behind monthly plans. The product goal is to build the useful core myself, keep the source evidence visible, and make the system technically honest.</p>
+    </section>
+
+    <section class="workspace-section" id="product">
+      <div class="workspace-head reveal">
+        <div>
+          <p class="eyebrow">Working product</p>
+          <h2>Your lecture, turned into a searchable source.</h2>
+        </div>
+        <p>Record audio in-browser or load the demo. LectureLens stores sessions locally, segments transcript text, builds semantic embeddings, and returns the strongest source passages for a question.</p>
+      </div>
+
+      <div class="app-shell">
+        <aside class="library">
+          <div class="library-top">
+            <div>
+              <small>MY LECTURES</small>
+              <h3>Library</h3>
+            </div>
+            <button id="newLecture" class="icon-btn" type="button" aria-label="New lecture">+</button>
+          </div>
+
+          <button class="lecture-item active" type="button">
+            <span class="lecture-icon">08</span>
+            <span><b>Recursion & call stack</b><small>CS 101 · demo</small></span>
+          </button>
+
+          <div class="empty-note">
+            Your recordings stay in this browser unless you export them.
+          </div>
+
+          <button id="loadDemo" class="wide secondary" type="button">Load sample lecture</button>
+        </aside>
+
+        <section class="studio">
+          <div class="studio-toolbar">
+            <div>
+              <small id="courseLabel">LECTURE SESSION</small>
+              <input id="lectureTitle" value="Untitled lecture" aria-label="Lecture title" />
+            </div>
+            <div class="toolbar-actions">
+              <button id="recordBtn" class="record-btn" type="button"><span></span> Record</button>
+              <label class="upload-btn">
+                Import audio
+                <input id="audioFile" type="file" accept="audio/*" hidden />
+              </label>
+            </div>
+          </div>
+
+          <div class="wave-wrap">
+            <canvas id="waveform" width="1200" height="150" aria-label="Audio waveform"></canvas>
+            <div class="wave-meta">
+              <span id="recordStatus">Ready to record</span>
+              <span id="timer">00:00</span>
+            </div>
+            <audio id="player" controls preload="metadata"></audio>
+          </div>
+
+          <div class="studio-grid">
+            <section class="transcript-panel">
+              <div class="panel-title">
+                <div>
+                  <small>TRANSCRIPT</small>
+                  <h3>Source timeline</h3>
+                </div>
+                <div class="model-pill" id="modelStatus"><i></i> semantic model idle</div>
+              </div>
+
+              <div class="transcript-tools">
+                <textarea id="transcriptInput" placeholder="Paste a timestamped transcript here, or load the sample lecture.
+
+Format example:
+[00:00] Today we're talking about recursion...
+[00:24] A base case tells the function when to stop..."></textarea>
+                <div class="transcript-actions">
+                  <button id="parseTranscript" class="wide primary" type="button">Build lecture index</button>
+                  <button id="sampleTranscript" class="wide secondary" type="button">Insert sample transcript</button>
+                </div>
+              </div>
+
+              <div id="timeline" class="timeline hidden" aria-live="polite"></div>
+            </section>
+
+            <aside class="insight-panel">
+              <div class="tabs" role="tablist">
+                <button class="tab active" data-tab="ask" type="button">Ask</button>
+                <button class="tab" data-tab="notes" type="button">Notes</button>
+                <button class="tab" data-tab="study" type="button">Study</button>
+              </div>
+
+              <div class="tab-panel active" id="tab-ask">
+                <label for="question">Ask the lecture</label>
+                <textarea id="question" placeholder="Example: What is a base case?"></textarea>
+                <button id="searchBtn" class="wide accent" type="button">Find source evidence</button>
+                <div id="searchResults" class="search-results">
+                  <div class="placeholder-card">
+                    <b>Answers should have receipts.</b>
+                    <p>LectureLens returns the strongest transcript evidence and links it to the source timestamp.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="tab-panel" id="tab-notes">
+                <div id="notesOutput" class="notes-output">
+                  <p class="muted">Build an index to generate structured notes from the transcript.</p>
+                </div>
+              </div>
+
+              <div class="tab-panel" id="tab-study">
+                <div id="studyOutput" class="study-output">
+                  <p class="muted">Your key terms and quick-review cards will appear here.</p>
+                </div>
+              </div>
+            </aside>
+          </div>
+        </section>
+      </div>
+
+      <p id="error" class="error" role="alert"></p>
+    </section>
+
+    <section class="proof-grid reveal">
+      <article>
+        <span>01</span>
+        <h3>Source-linked answers</h3>
+        <p>Every retrieved concept points back to the transcript segment and its timestamp instead of hiding behind a generated summary.</p>
+      </article>
+      <article>
+        <span>02</span>
+        <h3>Local-first storage</h3>
+        <p>Recordings and lecture metadata are designed to stay in the browser by default, reducing unnecessary server-side handling.</p>
+      </article>
+      <article>
+        <span>03</span>
+        <h3>Semantic retrieval</h3>
+        <p>MiniLM embeddings help match meaning across different wording, while lexical overlap keeps exact technical terms visible.</p>
+      </article>
+    </section>
+
+    <section class="how reveal" id="how">
+      <div class="how-copy">
+        <p class="eyebrow">System design</p>
+        <h2>Audio becomes evidence you can search.</h2>
+        <p>The first release focuses on the full browser workflow and semantic retrieval layer. Browser speech-to-text is an active milestone; sample and imported transcripts keep the retrieval system independently testable now.</p>
+      </div>
+
+      <div class="pipeline">
+        <div><small>01</small><b>Capture</b><span>MediaRecorder + audio import</span></div>
+        <i>→</i>
+        <div><small>02</small><b>Segment</b><span>timestamp-aware transcript chunks</span></div>
+        <i>→</i>
+        <div><small>03</small><b>Embed</b><span>MiniLM sentence vectors</span></div>
+        <i>→</i>
+        <div><small>04</small><b>Retrieve</b><span>semantic + lexical ranking</span></div>
+        <i>→</i>
+        <div><small>05</small><b>Verify</b><span>jump back to source time</span></div>
+      </div>
+    </section>
+
+    <section class="privacy reveal" id="privacy">
+      <div class="privacy-card">
+        <p class="eyebrow">Privacy by architecture</p>
+        <h2>Your lecture should not need a cloud account just to become useful.</h2>
+        <p>LectureLens is designed around browser-side recording, local storage, and client-side retrieval. The current build does not require a LectureLens backend for transcript indexing or semantic search.</p>
+        <div class="privacy-list">
+          <span>✓ local recording workflow</span>
+          <span>✓ browser model inference</span>
+          <span>✓ no required account</span>
+          <span>✓ source evidence stays visible</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="closing reveal">
+      <p class="eyebrow">LectureLens</p>
+      <blockquote>Don’t just summarize the class.<br><em>Show me where they said it.</em></blockquote>
+      <a href="https://github.com/Abdelrahmany-Radwan/LectureLens" target="_blank" rel="noreferrer">Explore the engineering ↗</a>
+    </section>
+  </main>
+
+  <footer>
+    <div class="brand"><img src="./assets/lecturelens-mark.svg" alt="" width="28" height="28" /><b>LectureLens</b></div>
+    <p>Built by Abdelrahman Radwan.</p>
+    <a href="#top">Back to top ↑</a>
+  </footer>
+
+  <script type="module" src="./app.js"></script>
+</body>
+</html>
