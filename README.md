@@ -14,6 +14,8 @@ Lecture transcription, summaries, and searchable notes are useful, but many prod
 
 - in-browser audio recording with `MediaRecorder`
 - audio import and playback
+- local browser speech-to-text with `Xenova/whisper-tiny.en`
+- timestamped Whisper transcript output
 - live waveform feedback
 - timestamp-aware transcript parsing
 - MiniLM sentence embeddings in the browser with Transformers.js
@@ -25,7 +27,7 @@ Lecture transcription, summaries, and searchable notes are useful, but many prod
 - lexical fallback if the semantic model is unavailable
 - responsive, reduced-motion-aware UI
 
-> Browser speech-to-text is the next major milestone. The current release deliberately keeps transcription and retrieval separable so the retrieval layer can be tested independently.
+Browser speech-to-text is now implemented with **Whisper Tiny English running locally through Transformers.js**. Recorded or imported audio is decoded in-browser, transcribed into timestamped segments, and then indexed for semantic search.
 
 ## System
 
@@ -59,7 +61,16 @@ The public interface runs `Xenova/all-MiniLM-L6-v2` with Transformers.js. Search
 
 LectureLens includes a reproducible retrieval benchmark under `evaluation/` designed to test whether a question retrieves the correct lecture passage, including hard negatives that discuss related concepts without actually answering the question.
 
-The evaluation workflow reports precision, recall, F1, Recall@1, Recall@3, Mean Reciprocal Rank (MRR), latency, and explicit error cases. Results will be added here only after the workflow completes successfully.
+The current 32-pair regression benchmark uses a development split for threshold selection and a held-out test split for final classification metrics.
+
+| Method | Precision | Recall | F1 | Accuracy |
+| --- | ---: | ---: | ---: | ---: |
+| MiniLM semantic | 0.714 | 1.000 | 0.833 | 0.833 |
+| **Hybrid semantic + lexical** | **0.833** | **1.000** | **0.909** | **0.917** |
+
+Median semantic scoring latency on the GitHub Actions CPU runner was **6.647 ms per query/passage pair**.
+
+These results describe the current regression benchmark only; they are not claims about population-level lecture search quality. Ranking metrics are intentionally not promoted yet because the current benchmark grouping is too sparse for a meaningful Recall@K claim.
 
 ## Engineering decisions
 
@@ -72,13 +83,12 @@ The evaluation workflow reports precision, recall, F1, Recall@1, Recall@3, Mean 
 
 ## Roadmap
 
-1. browser speech-to-text with Whisper-class models
-2. transcript chunking tuned for lecture structure
-3. searchable lecture chapters
-4. Word Error Rate evaluation for transcription
-5. IndexedDB lecture library
-6. exportable study packs
-7. Web Worker / WebGPU performance work
+1. transcript chunking tuned for lecture structure
+2. searchable lecture chapters
+3. Word Error Rate evaluation using labeled lecture audio
+4. IndexedDB lecture library
+5. exportable study packs
+6. Web Worker / WebGPU performance work
 
 ## License
 

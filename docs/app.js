@@ -5,6 +5,7 @@ const state = {
   chunks: [],
   embeddings: null,
   extractor: null,
+  transcriber: null,
   recorder: null,
   stream: null,
   audioChunks: [],
@@ -14,6 +15,7 @@ const state = {
   audioContext: null,
   analyser: null,
   source: null,
+  currentAudioUrl: null,
 };
 
 const SAMPLE = `[00:00] Today we're talking about recursion and why a function might call itself.
@@ -87,6 +89,90 @@ async function embedTexts(texts){
     out.push(Array.from(result.data));
   }
   return out;
+}
+async function ensureWhisper(){
+  if(state.transcriber) return state.transcriber;
+  const status=$("transcribeStatus");
+  status.className="transcribe-status loading";
+  status.querySelector("span:last-child").textContent="Loading Whisper Tiny English locally — first load can take a while…";
+  try{
+    state.transcriber=await pipeline(
+      "automatic-speech-recognition",
+      "Xenova/whisper-tiny.en",
+      {quantized:true}
+    );
+    status.className="transcribe-status ready";
+    status.querySelector("span:last-child").textContent="Whisper ready. Audio stays in this browser during transcription.";
+    return state.transcriber;
+  }catch(err){
+    console.error(err);
+    status.className="transcribe-status error";
+    status.querySelector("span:last-child").textContent="Whisper could not load. You can still paste a transcript manually.";
+    throw err;
+  }
+}
+
+async function decodeAudioToMono16k(url){
+  const response=await fetch(url);
+  if(!response.ok) throw new Error("Could not read the selected audio.");
+  const bytes=await response.arrayBuffer();
+  const AudioCtx=window.AudioContext||window.webkitAudioContext;
+  const ctx=new AudioCtx({sampleRate:16000});
+  try{
+    const buffer=await ctx.decodeAudioData(bytes.slice(0));
+    const length=buffer.length;
+    const mono=new Float32Array(length);
+    for(let c=0;c<buffer.numberOfChannels;c++){
+      const channel=buffer.getChannelData(c);
+      for(let i=0;i<length;i++) mono[i]+=channel[i]/buffer.numberOfChannels;
+    }
+    return mono;
+  }finally{
+    await ctx.close();
+  }
+}
+
+async function transcribeCurrentAudio(){
+  const status=$("transcribeStatus");
+  const btn=$("transcribeBtn");
+  if(!state.currentAudioUrl){
+    $("error").textContent="Record or import audio before transcribing.";
+    return;
+  }
+  $("error").textContent="";
+  btn.disabled=true;
+  const started=performance.now();
+  try{
+    status.className="transcribe-status loading";
+    status.querySelector("span:last-child").textContent="Preparing audio for local speech recognition…";
+    const [transcriber,audio]=await Promise.all([ensureWhisper(),decodeAudioToMono16k(state.currentAudioUrl)]);
+    status.className="transcribe-status loading";
+    status.querySelector("span:last-child").textContent="Transcribing locally with Whisper…";
+    const output=await transcriber(audio,{
+      return_timestamps:true,
+      chunk_length_s:30,
+      stride_length_s:5,
+    });
+    const chunks=(output.chunks||[]).filter(x=>x.text?.trim());
+    const transcript=chunks.length
+      ? chunks.map(c=>`[${formatTime(c.timestamp?.[0]||0)}] ${c.text.trim()}`).join("\n")
+      : `[00:00] ${(output.text||"").trim()}`;
+    if(!transcript.trim()||transcript.trim()==="[00:00]"){
+      throw new Error("Whisper returned an empty transcript.");
+    }
+    $("transcriptInput").value=transcript;
+    await buildIndex();
+    const elapsed=((performance.now()-started)/1000).toFixed(1);
+    status.className="transcribe-status ready";
+    status.querySelector("span:last-child").textContent=`Transcript ready in ${elapsed}s · ${chunks.length||1} timestamped segment${(chunks.length||1)===1?"":"s"}.`;
+  }catch(err){
+    console.error(err);
+    status.className="transcribe-status error";
+    status.querySelector("span:last-child").textContent="Transcription failed for this audio. Try another browser/audio file or paste a transcript.";
+    $("error").textContent=err?.message||"Transcription failed.";
+  }finally{
+    btn.disabled=!state.currentAudioUrl;
+  }
 }
 function renderTimeline(){
   const box=$("timeline");
@@ -185,7 +271,12 @@ async function startRecording(){
     state.recorder.ondataavailable=e=>{if(e.data.size)state.audioChunks.push(e.data)};
     state.recorder.onstop=()=>{
       const blob=new Blob(state.audioChunks,{type:state.recorder.mimeType||"audio/webm"});
-      $("player").src=URL.createObjectURL(blob);
+      if(state.currentAudioUrl) URL.revokeObjectURL(state.currentAudioUrl);
+      state.currentAudioUrl=URL.createObjectURL(blob);
+      $("player").src=state.currentAudioUrl;
+      $("transcribeBtn").disabled=false;
+      $("transcribeStatus").className="transcribe-status";
+      $("transcribeStatus").querySelector("span:last-child").textContent="Recording ready — transcribe it locally with Whisper.";
       state.stream.getTracks().forEach(t=>t.stop());
       cancelAnimationFrame(state.raf);drawIdleWave();
     };
@@ -205,13 +296,36 @@ function stopRecording(){
   $("recordStatus").textContent="Recording saved in this session";
 }
 $("recordBtn").addEventListener("click",()=>state.recorder?.state==="recording"?stopRecording():startRecording());
-$("audioFile").addEventListener("change",e=>{const f=e.target.files?.[0];if(!f)return;$("player").src=URL.createObjectURL(f);$("recordStatus").textContent=`Imported: ${f.name}`;});
+$("audioFile").addEventListener("change",e=>{
+  const f=e.target.files?.[0]; if(!f) return;
+  if(state.currentAudioUrl) URL.revokeObjectURL(state.currentAudioUrl);
+  state.currentAudioUrl=URL.createObjectURL(f);
+  $("player").src=state.currentAudioUrl;
+  $("recordStatus").textContent=`Imported: ${f.name}`;
+  $("transcribeBtn").disabled=false;
+  $("transcribeStatus").className="transcribe-status";
+  $("transcribeStatus").querySelector("span:last-child").textContent="Audio ready — transcribe it locally with Whisper.";
+});
+$("transcribeBtn").addEventListener("click",transcribeCurrentAudio);
 $("sampleTranscript").addEventListener("click",()=>{$("transcriptInput").value=SAMPLE;});
 $("parseTranscript").addEventListener("click",buildIndex);
 $("searchBtn").addEventListener("click",searchLecture);
 $("loadDemo").addEventListener("click",async()=>{$("lectureTitle").value="Recursion & call stack";$("courseLabel").textContent="CS 101 · SAMPLE LECTURE";$("transcriptInput").value=SAMPLE;$("question").value="What is a base case?";await buildIndex();});
 $("loadDemoTop").addEventListener("click",()=>{$("product").scrollIntoView({behavior:"smooth"});setTimeout(()=>$("loadDemo").click(),450);});
-$("newLecture").addEventListener("click",()=>{$("lectureTitle").value="Untitled lecture";$("transcriptInput").value="";$("timeline").innerHTML="";$("timeline").classList.add("hidden");state.chunks=[];state.embeddings=null;$("searchResults").innerHTML='<div class="placeholder-card"><b>New lecture ready.</b><p>Record audio or paste a timestamped transcript to begin.</p></div>';});
+$("newLecture").addEventListener("click",()=>{
+  $("lectureTitle").value="Untitled lecture";
+  $("transcriptInput").value="";
+  $("timeline").innerHTML="";
+  $("timeline").classList.add("hidden");
+  if(state.currentAudioUrl) URL.revokeObjectURL(state.currentAudioUrl);
+  state.currentAudioUrl=null;
+  $("player").removeAttribute("src"); $("player").load();
+  $("transcribeBtn").disabled=true;
+  $("transcribeStatus").className="transcribe-status";
+  $("transcribeStatus").querySelector("span:last-child").textContent="Add or record audio, then transcribe it locally with Whisper.";
+  state.chunks=[]; state.embeddings=null;
+  $("searchResults").innerHTML='<div class="placeholder-card"><b>New lecture ready.</b><p>Record audio, import audio, or paste a timestamped transcript to begin.</p></div>';
+});
 document.querySelectorAll(".tab").forEach(btn=>btn.addEventListener("click",()=>{document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));document.querySelectorAll(".tab-panel").forEach(x=>x.classList.remove("active"));btn.classList.add("active");$(`tab-${btn.dataset.tab}`).classList.add("active");}));
 window.addEventListener("scroll",()=>{const max=document.documentElement.scrollHeight-innerHeight;$("progress").style.width=`${max?scrollY/max*100:0}%`;document.querySelectorAll(".reveal").forEach(el=>{if(el.getBoundingClientRect().top<innerHeight*.88)el.classList.add("visible")})});
 const saved=localStorage.getItem("lecturelens:lastTranscript");if(saved)$("transcriptInput").value=saved;
