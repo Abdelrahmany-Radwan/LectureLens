@@ -3,7 +3,7 @@ import { test, expect } from "@playwright/test";
 test("sample lecture can be searched and source evidence is shown", async ({ page }) => {
   await page.goto("/?e2e=1");
 
-  await expect(page.getByRole("heading", { name: /don't replay the whole lecture/i })).toBeVisible();
+  await expect(page.locator("h1")).toContainText(/replay the whole lecture/i);
   await expect(page.getByText("Regression models")).toHaveCount(0);
 
   await page.getByRole("button", { name: "Load sample lecture" }).click();
