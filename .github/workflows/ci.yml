@@ -31,6 +31,7 @@ jobs:
         run: |
           python -m py_compile evaluation/evaluate.py
           python -m py_compile evaluation/asr_evaluate.py
+          python -m py_compile evaluation/classroom_asr_evaluate.py
 
       - uses: actions/setup-node@v4
         with:
