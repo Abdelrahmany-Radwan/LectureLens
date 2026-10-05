@@ -1,0 +1,43 @@
+name: Evaluate Classroom ASR
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - "evaluation/classroom_asr_evaluate.py"
+      - "evaluation/classroom_asr_requirements.txt"
+      - ".github/workflows/classroom-asr.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  classroom-asr:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+          cache: "pip"
+          cache-dependency-path: evaluation/classroom_asr_requirements.txt
+
+      - name: Install classroom ASR dependencies
+        run: python -m pip install -r evaluation/classroom_asr_requirements.txt
+
+      - name: Run CoTACS classroom WER benchmark
+        run: python evaluation/classroom_asr_evaluate.py
+
+      - name: Publish classroom ASR summary
+        run: |
+          echo "## LectureLens classroom ASR benchmark" >> "$GITHUB_STEP_SUMMARY"
+          echo "CoTACS classroom speech · ATA1 · first 120 seconds" >> "$GITHUB_STEP_SUMMARY"
+          cat evaluation/classroom_asr_results.json >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/upload-artifact@v5
+        with:
+          name: lecturelens-classroom-asr-results
+          path: evaluation/classroom_asr_results.json
