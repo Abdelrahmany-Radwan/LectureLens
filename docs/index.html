@@ -131,16 +131,13 @@
             <button id="newLecture" class="icon-btn" type="button" aria-label="New lecture">+</button>
           </div>
 
-          <button class="lecture-item active" type="button">
-            <span class="lecture-icon">CS</span>
-            <span><b>Recursion & call stack</b><small>Today · sample</small></span>
-          </button>
+          <div id="libraryList" class="library-list" aria-live="polite"></div>
 
-          <div class="library-empty">
+          <div id="libraryEmpty" class="library-empty">
             <span class="library-empty-icon">＋</span>
             <div>
               <b>Your next lecture goes here</b>
-              <small>Record or import audio to start a new session.</small>
+              <small>Record or import audio, then save the session.</small>
             </div>
           </div>
 
@@ -162,6 +159,7 @@
               <button id="recordBtn" class="record-btn" type="button"><span></span> Record</button>
               <label class="upload-btn">Import audio<input id="audioFile" type="file" accept="audio/*" hidden /></label>
               <button id="transcribeBtn" class="transcribe-btn" type="button" disabled>✦ Transcribe</button>
+              <button id="saveLecture" class="save-btn" type="button">Save lecture</button>
             </div>
           </div>
 

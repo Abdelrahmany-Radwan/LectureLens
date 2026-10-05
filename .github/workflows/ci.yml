@@ -31,3 +31,15 @@ jobs:
         run: |
           python -m py_compile evaluation/evaluate.py
           python -m py_compile evaluation/asr_evaluate.py
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install browser test dependencies
+        run: |
+          npm install
+          npx playwright install --with-deps chromium
+
+      - name: Run browser product tests
+        run: npm run test:e2e

@@ -41,3 +41,42 @@ The first release does not require a LectureLens backend for recording, transcri
 ## 8. Planned speech layer
 
 The next milestone will add browser/local speech recognition. Evaluation will use Word Error Rate (WER) against manually transcribed lecture samples.
+
+
+## v1 browser architecture
+
+LectureLens now separates interface work from ML inference.
+
+```text
+main UI thread
+  ├─ MediaRecorder / Web Audio
+  ├─ IndexedDB lecture library
+  ├─ transcript / timeline rendering
+  ├─ lexical fallback
+  └─ message bridge
+          │
+          ▼
+      ml-worker.js
+        ├─ Whisper Tiny English
+        └─ MiniLM feature extraction
+```
+
+### Persistent lecture records
+
+Each saved lecture is stored in IndexedDB as a record containing:
+
+- stable lecture ID
+- title and course label
+- timestamped transcript
+- optional audio Blob
+- update timestamp
+
+The UI reconstructs object URLs only when a lecture is opened, avoiding attempts to persist temporary Blob URLs.
+
+### Responsiveness
+
+Whisper transcription and MiniLM embedding calls run inside a module Web Worker. Audio preprocessing remains in browser audio APIs, then the 16 kHz mono Float32 buffer is transferred to the worker rather than copied.
+
+### Browser product testing
+
+Playwright tests exercise the product at the browser level: sample loading, evidence retrieval, IndexedDB persistence across reloads, lecture reopening, and workspace reset behavior. A deterministic query flag disables external model loading only inside end-to-end tests; production behavior still uses the ML worker.
