@@ -1,5 +1,15 @@
 # LectureLens
 
+<p align="center">
+  <img src="./docs/assets/lecturelens-preview.svg" alt="LectureLens product preview" width="100%" />
+</p>
+
+<p align="center">
+  <a href="https://github.com/Abdelrahmany-Radwan/LectureLens/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/Abdelrahmany-Radwan/LectureLens/ci.yml?branch=main&label=CI" alt="CI status"></a>
+  <a href="https://github.com/Abdelrahmany-Radwan/LectureLens/actions/workflows/evaluation.yml"><img src="https://img.shields.io/github/actions/workflow/status/Abdelrahmany-Radwan/LectureLens/evaluation.yml?branch=main&label=Evaluation" alt="Evaluation status"></a>
+  <a href="https://github.com/Abdelrahmany-Radwan/LectureLens/actions/workflows/pages.yml"><img src="https://img.shields.io/github/actions/workflow/status/Abdelrahmany-Radwan/LectureLens/pages.yml?branch=main&label=Deploy" alt="Deploy status"></a>
+</p>
+
 > **Hear it. Find it. Study it.**
 
 LectureLens is a local-first lecture companion that turns timestamped class transcripts into searchable evidence. It is designed around one product principle: **answers should point back to where the instructor actually said it.**
