@@ -17,7 +17,7 @@
 - MiniLM semantic embeddings with lexical fallback
 - grouped retrieval benchmark with held-out query groups
 - real-audio LibriSpeech WER benchmark
-- classroom-domain CoTACS WER benchmark workflow
+- classroom-domain CoTACS WER benchmark: **30.3% WER** on ATA1 first 120 seconds
 - latency and real-time-factor reporting
 - explicit scope notes to avoid population-level accuracy claims
 
