@@ -33,8 +33,12 @@ Lecture transcription, summaries, and searchable notes are useful, but many prod
 - clickable source timestamps
 - structured lecture outline
 - quick-review study cards
-- local transcript persistence
+- persistent multi-lecture library with IndexedDB
+- lecture audio + transcript reopening across reloads
+- ML inference isolated in a Web Worker so Whisper/MiniLM do not own the UI thread
+- lightweight transcript chapter grouping
 - lexical fallback if the semantic model is unavailable
+- Playwright end-to-end product tests
 - responsive, reduced-motion-aware UI
 
 Browser speech-to-text is now implemented with **Whisper Tiny English running locally through Transformers.js**. Recorded or imported audio is decoded in-browser, transcribed into timestamped segments, and then indexed for semantic search.
@@ -115,9 +119,9 @@ The benchmark uses labeled **LibriSpeech read-English audio**, not classroom lec
 1. transcript chunking tuned for lecture structure
 2. searchable lecture chapters
 3. Word Error Rate evaluation using labeled lecture audio
-4. IndexedDB lecture library
-5. exportable study packs
-6. Web Worker / WebGPU performance work
+4. exportable study packs
+5. WebGPU performance experiments
+6. larger student usability study
 
 ## License
 
