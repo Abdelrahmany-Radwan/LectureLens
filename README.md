@@ -105,6 +105,24 @@ LectureLens also includes a separate **real-audio ASR regression benchmark** for
 
 The benchmark uses labeled **LibriSpeech read-English audio**, not classroom lecture recordings. It measures the corresponding Whisper Tiny English model in the Python evaluation workflow; it does **not** claim identical browser runtime performance for Transformers.js. Lower WER is better, and an RTF below 1.0 means the benchmark processed audio faster than real time on the GitHub Actions CPU runner.
 
+## Classroom speech evaluation
+
+To test the model in the actual product domain, LectureLens also runs a separate classroom-speech regression benchmark against **CoTACS — the Corpus of Teaching Assistant Classroom Speech**.
+
+| Classroom ASR metric | Result |
+| --- | ---: |
+| Normalized Word Error Rate | **30.3%** |
+| Speaker | **ATA1** |
+| Evaluated segment | **120.0 s** |
+| Reference words | **165** |
+| Hypothesis words | **138** |
+| Inference time | **12.151 s** |
+| Real-time factor | **0.1013** |
+
+This result uses the first 120 seconds of real university classroom speech from CoTACS with its aligned `TA - words` TextGrid tier. It is intentionally reported separately from the cleaner LibriSpeech benchmark. The 30.3% WER shows that classroom speech is materially harder for Whisper Tiny English than read speech, which is an important product limitation rather than something LectureLens hides.
+
+This is a **single-speaker regression sample**, not a population-level classroom accuracy claim. CoTACS is licensed under **CC BY-NC 4.0** and is downloaded only during the evaluation workflow rather than redistributed in this repository. Source: https://www.spokencorpus.com/
+
 ## Engineering decisions
 
 - **Source evidence over generated certainty.** Results point to transcript text and timestamps.
@@ -116,12 +134,11 @@ The benchmark uses labeled **LibriSpeech read-English audio**, not classroom lec
 
 ## Roadmap
 
-1. transcript chunking tuned for lecture structure
-2. searchable lecture chapters
-3. Word Error Rate evaluation using labeled lecture audio
-4. exportable study packs
-5. WebGPU performance experiments
-6. larger student usability study
+1. smarter topic-aware chapter segmentation
+2. exportable study packs
+3. WebGPU performance experiments
+4. larger multi-speaker classroom ASR benchmark
+5. student usability study
 
 ## License
 
