@@ -158,6 +158,7 @@
             <div class="toolbar-actions">
               <button id="recordBtn" class="record-btn" type="button"><span></span> Record</button>
               <label class="upload-btn">Import audio<input id="audioFile" type="file" accept="audio/*" hidden /></label>
+              <button id="transcribeBtn" class="transcribe-btn" type="button" disabled>✦ Transcribe</button>
             </div>
           </div>
 
@@ -168,6 +169,10 @@
               <span id="timer">00:00</span>
             </div>
             <audio id="player" controls preload="metadata"></audio>
+            <div id="transcribeStatus" class="transcribe-status" aria-live="polite">
+              <span class="status-dot"></span>
+              <span>Add or record audio, then transcribe it locally with Whisper.</span>
+            </div>
           </div>
 
           <div class="studio-grid">
