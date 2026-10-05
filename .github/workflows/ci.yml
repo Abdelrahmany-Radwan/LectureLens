@@ -13,7 +13,7 @@ jobs:
   validate:
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       - name: Validate browser JavaScript
         run: node --check docs/app.js
       - name: Validate product files
