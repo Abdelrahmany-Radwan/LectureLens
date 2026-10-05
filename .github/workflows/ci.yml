@@ -1,0 +1,31 @@
+name: Validate LectureLens
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+      - name: Validate browser JavaScript
+        run: node --check docs/app.js
+      - name: Validate product files
+        run: |
+          test -s docs/index.html
+          test -s docs/style.css
+          test -s docs/app.js
+          test -s docs/assets/lecturelens-mark.svg
+          test -s README.md
+          test -s ARCHITECTURE.md
+          test -s SECURITY.md
+      - name: Validate benchmark JSON
+        run: python -m json.tool evaluation/benchmark.json >/dev/null
+      - name: Validate evaluator syntax
+        run: python -m py_compile evaluation/evaluate.py
