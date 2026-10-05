@@ -1,0 +1,226 @@
+[
+  {
+    "id": "01",
+    "query": "What is a base case?",
+    "passage": "A base case is the stopping condition that tells a recursive function when to return instead of calling itself again.",
+    "label": 1,
+    "split": "test"
+  },
+  {
+    "id": "02",
+    "query": "What is a base case?",
+    "passage": "The recursive case reduces the problem and calls the function again with a smaller input.",
+    "label": 0,
+    "split": "dev"
+  },
+  {
+    "id": "03",
+    "query": "What does the call stack do during recursion?",
+    "passage": "Every recursive call creates another frame on the call stack so the computer can track unfinished calls.",
+    "label": 1,
+    "split": "dev"
+  },
+  {
+    "id": "04",
+    "query": "What does the call stack do during recursion?",
+    "passage": "A missing base case can cause recursion to continue until stack space is exhausted.",
+    "label": 0,
+    "split": "test"
+  },
+  {
+    "id": "05",
+    "query": "How can I debug recursion?",
+    "passage": "Trace a small example by hand and write down each function call to see how recursion progresses.",
+    "label": 1,
+    "split": "dev"
+  },
+  {
+    "id": "06",
+    "query": "How can I debug recursion?",
+    "passage": "Recursion is useful for tree traversal because subtrees repeat the same structural pattern.",
+    "label": 0,
+    "split": "test"
+  },
+  {
+    "id": "07",
+    "query": "Why can recursion overflow the stack?",
+    "passage": "If the base case is missing or unreachable, recursive calls can continue until the program runs out of stack space.",
+    "label": 1,
+    "split": "dev"
+  },
+  {
+    "id": "08",
+    "query": "Why can recursion overflow the stack?",
+    "passage": "When the base case is reached the function starts returning and the stack unwinds.",
+    "label": 0,
+    "split": "dev"
+  },
+  {
+    "id": "09",
+    "query": "What is gradient descent?",
+    "passage": "Gradient descent updates model parameters in the direction that reduces the loss function.",
+    "label": 1,
+    "split": "test"
+  },
+  {
+    "id": "10",
+    "query": "What is gradient descent?",
+    "passage": "A neural network contains layers of weighted connections between units.",
+    "label": 0,
+    "split": "dev"
+  },
+  {
+    "id": "11",
+    "query": "Why do we use a validation set?",
+    "passage": "The validation set helps choose model settings without using the final test data for tuning.",
+    "label": 1,
+    "split": "dev"
+  },
+  {
+    "id": "12",
+    "query": "Why do we use a validation set?",
+    "passage": "The test set is used once at the end to estimate final model performance.",
+    "label": 0,
+    "split": "test"
+  },
+  {
+    "id": "13",
+    "query": "What does precision measure?",
+    "passage": "Precision asks how many predicted positive examples were actually positive.",
+    "label": 1,
+    "split": "dev"
+  },
+  {
+    "id": "14",
+    "query": "What does precision measure?",
+    "passage": "Recall asks how many of the real positive examples the model successfully found.",
+    "label": 0,
+    "split": "dev"
+  },
+  {
+    "id": "15",
+    "query": "What does recall measure?",
+    "passage": "Recall measures the fraction of actual positive examples that were retrieved or classified correctly.",
+    "label": 1,
+    "split": "test"
+  },
+  {
+    "id": "16",
+    "query": "What does recall measure?",
+    "passage": "Accuracy is the fraction of all examples classified correctly.",
+    "label": 0,
+    "split": "dev"
+  },
+  {
+    "id": "17",
+    "query": "What is binary search?",
+    "passage": "Binary search repeatedly halves a sorted search interval based on whether the target is above or below the midpoint.",
+    "label": 1,
+    "split": "dev"
+  },
+  {
+    "id": "18",
+    "query": "What is binary search?",
+    "passage": "A hash table uses a hash function to map keys to buckets for fast lookup.",
+    "label": 0,
+    "split": "test"
+  },
+  {
+    "id": "19",
+    "query": "Why must binary search use sorted data?",
+    "passage": "Binary search can discard half the remaining interval only because the values are ordered.",
+    "label": 1,
+    "split": "dev"
+  },
+  {
+    "id": "20",
+    "query": "Why must binary search use sorted data?",
+    "passage": "Binary search has logarithmic time complexity because the search space is halved each step.",
+    "label": 0,
+    "split": "dev"
+  },
+  {
+    "id": "21",
+    "query": "What is normalization in databases?",
+    "passage": "Database normalization organizes tables to reduce duplicated data and update anomalies.",
+    "label": 1,
+    "split": "test"
+  },
+  {
+    "id": "22",
+    "query": "What is normalization in databases?",
+    "passage": "An index can speed up database queries by providing a searchable structure over selected columns.",
+    "label": 0,
+    "split": "dev"
+  },
+  {
+    "id": "23",
+    "query": "Why use a database index?",
+    "passage": "An index improves many read queries by avoiding a full table scan, at the cost of storage and write overhead.",
+    "label": 1,
+    "split": "dev"
+  },
+  {
+    "id": "24",
+    "query": "Why use a database index?",
+    "passage": "Normalization reduces duplicate data by separating related entities into tables.",
+    "label": 0,
+    "split": "test"
+  },
+  {
+    "id": "25",
+    "query": "What causes seasons on Earth?",
+    "passage": "Earth's axial tilt changes the angle and duration of sunlight received by each hemisphere during the year.",
+    "label": 1,
+    "split": "dev"
+  },
+  {
+    "id": "26",
+    "query": "What causes seasons on Earth?",
+    "passage": "Earth travels around the Sun in an elliptical orbit that takes about one year.",
+    "label": 0,
+    "split": "test"
+  },
+  {
+    "id": "27",
+    "query": "Why does opportunity cost matter?",
+    "passage": "Opportunity cost is the value of the best alternative you give up when you make a choice.",
+    "label": 1,
+    "split": "dev"
+  },
+  {
+    "id": "28",
+    "query": "Why does opportunity cost matter?",
+    "passage": "Scarcity means resources are limited relative to human wants.",
+    "label": 0,
+    "split": "dev"
+  },
+  {
+    "id": "29",
+    "query": "What is the main purpose of HTTP?",
+    "passage": "HTTP defines how web clients and servers format and exchange requests and responses.",
+    "label": 1,
+    "split": "test"
+  },
+  {
+    "id": "30",
+    "query": "What is the main purpose of HTTP?",
+    "passage": "DNS translates human-readable domain names into network addresses.",
+    "label": 0,
+    "split": "dev"
+  },
+  {
+    "id": "31",
+    "query": "What does DNS do?",
+    "passage": "DNS resolves names such as example.com into IP addresses that computers use to locate hosts.",
+    "label": 1,
+    "split": "dev"
+  },
+  {
+    "id": "32",
+    "query": "What does DNS do?",
+    "passage": "HTTP uses methods such as GET and POST to communicate between clients and servers.",
+    "label": 0,
+    "split": "test"
+  }
+]
