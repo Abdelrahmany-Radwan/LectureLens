@@ -1,5 +1,15 @@
 # LectureLens
 
+<p align="center">
+  <img src="./docs/assets/lecturelens-preview.svg" alt="LectureLens product preview" width="100%" />
+</p>
+
+<p align="center">
+  <a href="https://github.com/Abdelrahmany-Radwan/LectureLens/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/Abdelrahmany-Radwan/LectureLens/ci.yml?branch=main&label=CI" alt="CI status"></a>
+  <a href="https://github.com/Abdelrahmany-Radwan/LectureLens/actions/workflows/evaluation.yml"><img src="https://img.shields.io/github/actions/workflow/status/Abdelrahmany-Radwan/LectureLens/evaluation.yml?branch=main&label=Evaluation" alt="Evaluation status"></a>
+  <a href="https://github.com/Abdelrahmany-Radwan/LectureLens/actions/workflows/pages.yml"><img src="https://img.shields.io/github/actions/workflow/status/Abdelrahmany-Radwan/LectureLens/pages.yml?branch=main&label=Deploy" alt="Deploy status"></a>
+</p>
+
 > **Hear it. Find it. Study it.**
 
 LectureLens is a local-first lecture companion that turns timestamped class transcripts into searchable evidence. It is designed around one product principle: **answers should point back to where the instructor actually said it.**
@@ -61,16 +71,21 @@ The public interface runs `Xenova/all-MiniLM-L6-v2` with Transformers.js. Search
 
 LectureLens includes a reproducible retrieval benchmark under `evaluation/` designed to test whether a question retrieves the correct lecture passage, including hard negatives that discuss related concepts without actually answering the question.
 
-The current 32-pair regression benchmark uses a development split for threshold selection and a held-out test split for final classification metrics.
+The current benchmark contains **40 labeled query/passage pairs across 10 complete query groups**, with one relevant passage and three hard negatives per query. Six query groups are used for development and four are held out for final testing.
 
-| Method | Precision | Recall | F1 | Accuracy |
-| --- | ---: | ---: | ---: | ---: |
-| MiniLM semantic | 0.714 | 1.000 | 0.833 | 0.833 |
-| **Hybrid semantic + lexical** | **0.833** | **1.000** | **0.909** | **0.917** |
+| Held-out metric | Hybrid retrieval |
+| --- | ---: |
+| Precision | **0.667** |
+| Recall | **1.000** |
+| F1 | **0.800** |
+| Accuracy | **0.875** |
+| Recall@1 | **1.000** |
+| Recall@3 | **1.000** |
+| MRR | **1.000** |
 
-Median semantic scoring latency on the GitHub Actions CPU runner was **6.647 ms per query/passage pair**.
+Median semantic scoring latency on the GitHub Actions CPU runner was **3.769 ms per query/passage pair**.
 
-These results describe the current regression benchmark only; they are not claims about population-level lecture search quality. Ranking metrics are intentionally not promoted yet because the current benchmark grouping is too sparse for a meaningful Recall@K claim.
+The ranking results mean the correct source passage ranked first for all four held-out query groups in this small regression benchmark. These numbers are deliberately scoped to the current curated dataset; they are not claims about population-level lecture-search quality.
 
 ## Engineering decisions
 
