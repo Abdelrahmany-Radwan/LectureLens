@@ -87,6 +87,20 @@ Median semantic scoring latency on the GitHub Actions CPU runner was **3.769 ms 
 
 The ranking results mean the correct source passage ranked first for all four held-out query groups in this small regression benchmark. These numbers are deliberately scoped to the current curated dataset; they are not claims about population-level lecture-search quality.
 
+## Speech recognition evaluation
+
+LectureLens also includes a separate **real-audio ASR regression benchmark** for Whisper Tiny English.
+
+| ASR metric | Result |
+| --- | ---: |
+| Normalized Word Error Rate | **8.0%** |
+| Labeled clips | **8** |
+| Total audio | **86.345 s** |
+| Total inference time | **11.398 s** |
+| Real-time factor | **0.132** |
+
+The benchmark uses labeled **LibriSpeech read-English audio**, not classroom lecture recordings. It measures the corresponding Whisper Tiny English model in the Python evaluation workflow; it does **not** claim identical browser runtime performance for Transformers.js. Lower WER is better, and an RTF below 1.0 means the benchmark processed audio faster than real time on the GitHub Actions CPU runner.
+
 ## Engineering decisions
 
 - **Source evidence over generated certainty.** Results point to transcript text and timestamps.
