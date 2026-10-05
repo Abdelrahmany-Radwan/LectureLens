@@ -1,4 +1,5 @@
 const $ = (id) => document.getElementById(id);
+const E2E = new URLSearchParams(location.search).has("e2e");
 
 const state = {
   chunks: [],
@@ -108,6 +109,10 @@ function workerTask(type,payload,transfer=[]){
 }
 
 async function embedTexts(texts){
+  if(E2E){
+    $("modelStatus").innerHTML="<i></i> lexical test mode";
+    return null;
+  }
   $("modelStatus").innerHTML="<i></i> loading MiniLM…";
   try{
     const vectors=await workerTask("embed",{texts});
