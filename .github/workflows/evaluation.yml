@@ -28,7 +28,7 @@ jobs:
         run: |
           echo "## LectureLens retrieval benchmark" >> "$GITHUB_STEP_SUMMARY"
           cat evaluation/results.json >> "$GITHUB_STEP_SUMMARY"
-      - uses: actions/upload-artifact@v5
+      - uses: actions/upload-artifact@v7
         with:
           name: lecturelens-evaluation-results
           path: evaluation/results.json
